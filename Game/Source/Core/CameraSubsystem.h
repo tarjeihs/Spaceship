@@ -17,8 +17,14 @@ public:
         LastMousePosition = glm::vec2(0.0f);
         CurrentMousePosition = glm::vec2(0.0f);
 
-        MovementSpeed = 5.0f;
-        RotationSpeed = 5.0f;
+        LastJoystickPosition = glm::vec2(0.0f);
+        CurrentJoystickPosition = glm::vec2(0.0f);
+
+        KeyboardMovementSpeed = 5.0f;
+        MouseRotationSpeed = 2.0f;
+
+        JoystickMovementSpeed = 4.0f;
+        JoystickRotationSpeed = 2.0f;
     }
 
     virtual void OnAttach() override;
@@ -38,11 +44,16 @@ protected:
     glm::vec3 Rotation;
 
     glm::vec2 LastMousePosition;
-    glm::vec2 UnfocusedMousePosition;
     glm::vec2 CurrentMousePosition;
 
-    float MovementSpeed;
-    float RotationSpeed;
+    glm::vec2 LastJoystickPosition;
+    glm::vec2 CurrentJoystickPosition;
+
+    float KeyboardMovementSpeed;
+    float MouseRotationSpeed;
+
+    float JoystickMovementSpeed;
+    float JoystickRotationSpeed;
 };
 
 REGISTER_SUBSYSTEM(PCameraSubsystem);

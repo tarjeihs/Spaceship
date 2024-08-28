@@ -24,47 +24,65 @@ void PCameraSubsystem::OnDetach()
 
 void PCameraSubsystem::OnUpdate(float DeltaTime)
 {
+    if (!GetWindow()->IsFocused())
+    {
+        return;
+    }
+
     PCamera* Camera = GetScene()->ActiveCamera;
 
-    if (PInput::IsKeyPressed(RK_KEY_W))
+    if (PInput::GetKeyPressed(RK_KEY_W))
     {
-        Position += GetForwardVector() * MovementSpeed * DeltaTime;
+        Position += GetForwardVector() * KeyboardMovementSpeed * DeltaTime;
     }
-    if (PInput::IsKeyPressed(RK_KEY_S))
+    if (PInput::GetKeyPressed(RK_KEY_S))
     {
-        Position -= GetForwardVector() * MovementSpeed * DeltaTime;
+        Position -= GetForwardVector() * KeyboardMovementSpeed * DeltaTime;
     }
-    if (PInput::IsKeyPressed(RK_KEY_D))
+    if (PInput::GetKeyPressed(RK_KEY_D))
     {
-        Position += GetRightVector() * MovementSpeed * DeltaTime;
+        Position += GetRightVector() * KeyboardMovementSpeed * DeltaTime;
     }
-    if (PInput::IsKeyPressed(RK_KEY_A))
+    if (PInput::GetKeyPressed(RK_KEY_A))
     {
-        Position -= GetRightVector() * MovementSpeed * DeltaTime;
+        Position -= GetRightVector() * KeyboardMovementSpeed * DeltaTime;
     }
-    if (PInput::IsKeyPressed(RK_KEY_SPACE))
+    if (PInput::GetKeyPressed(RK_KEY_SPACE))
     {
-        Position += GetUpVector() * MovementSpeed * DeltaTime;
+        Position += GetUpVector() * KeyboardMovementSpeed * DeltaTime;
     }
-    if (PInput::IsKeyPressed(RK_KEY_LEFT_CONTROL))
+    if (PInput::GetKeyPressed(RK_KEY_LEFT_CONTROL))
     {
-        Position -= GetUpVector() * MovementSpeed * DeltaTime;
+        Position -= GetUpVector() * KeyboardMovementSpeed * DeltaTime;
     }
 
-    if (GetWindow()->IsFocused())
+    if (int32_t JoystickID = PInput::GetFirstJoystickID(); JoystickID >= 0)
     {
-        CurrentMousePosition = glm::vec2(PInput::GetMouseX(), PInput::GetMouseY());
+        if (PInput::GetJoystickButton(JoystickID, RK_GAMEPAD_BUTTON_A))
+        {
+            Position += GetUpVector() * JoystickMovementSpeed * DeltaTime;
+        }
+        if (PInput::GetJoystickButton(JoystickID, RK_GAMEPAD_BUTTON_B))
+        {
+            Position -= GetUpVector() * JoystickMovementSpeed * DeltaTime;
+        }
 
-        const glm::vec2 DeltaMousePosition = CurrentMousePosition - LastMousePosition;
+        Position -= GetForwardVector() * JoystickMovementSpeed * PInput::GetJoystickAxis(JoystickID, RK_GAMEPAD_AXIS_LEFT_Y) * DeltaTime;
+        Position += GetRightVector() * JoystickMovementSpeed * PInput::GetJoystickAxis(JoystickID, RK_GAMEPAD_AXIS_LEFT_X) * DeltaTime;
 
-        Rotation.x -= DeltaMousePosition.y * RotationSpeed * DeltaTime;  // Pitch in radians
-        Rotation.y += DeltaMousePosition.x * RotationSpeed * DeltaTime;  // Yaw in radians
-
-        Rotation.x = glm::clamp(Rotation.x, -glm::half_pi<float>() + 1e-4f, glm::half_pi<float>() - 1e-4f);
-        Rotation.y = std::fmod(Rotation.y, glm::two_pi<float>());
-
-        LastMousePosition = CurrentMousePosition;
+        Rotation.x -= PInput::GetJoystickAxis(JoystickID, RK_GAMEPAD_AXIS_RIGHT_Y) * JoystickRotationSpeed * DeltaTime;  // Pitch in radians
+        Rotation.y += PInput::GetJoystickAxis(JoystickID, RK_GAMEPAD_AXIS_RIGHT_X) * JoystickRotationSpeed * DeltaTime;  // Yaw in radians
     }
+
+    CurrentMousePosition = glm::vec2(PInput::GetMouseX(), PInput::GetMouseY());
+    const glm::vec2 DeltaMousePosition = CurrentMousePosition - LastMousePosition;
+    LastMousePosition = CurrentMousePosition;
+
+    Rotation.x -= DeltaMousePosition.y * MouseRotationSpeed * DeltaTime;  // Pitch in radians
+    Rotation.y += DeltaMousePosition.x * MouseRotationSpeed * DeltaTime;  // Yaw in radians
+
+    Rotation.x = glm::clamp(Rotation.x, -glm::half_pi<float>() + 1e-4f, glm::half_pi<float>() - 1e-4f);
+    Rotation.y = std::fmod(Rotation.y, glm::two_pi<float>());
 
     Camera->CalculateViewMatrix(Position, Rotation);
 }

@@ -34,13 +34,15 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/Game/Shaders PREFIX "Shaders" FILE
 add_executable(Game ${GAME_FILES})
 
 # Add Rocket as a subdirectory with a proper binary directory
-add_subdirectory(${ROCKET_DIR} "Rocket" EXCLUDE_FROM_ALL)
+add_subdirectory(${ROCKET} "Rocket" EXCLUDE_FROM_ALL)
 
 target_include_directories(Game PRIVATE
     Game/Source
     Game/Vendor
-    ${ROCKET_DIR}/Engine/Source
-    ${ROCKET_DIR}/Engine/Vendor
+    ${ROCKET}/Engine/Source
+    ${ROCKET}/Engine/Vendor
+    ${ROCKET}/Vendor/glm
+    ${ROCKET}/Vendor/spdlog/include
 )
 
 target_link_libraries(Game PRIVATE

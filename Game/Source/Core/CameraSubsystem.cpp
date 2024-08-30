@@ -1,14 +1,14 @@
 #include "CameraSubsystem.h"
 
-#include "Core/Scene.h"
 #include "Core/Camera.h"
 #include "Core/Window.h"
 #include "Core/Input.h"
 #include "Core/KeyCode.h"
+#include "Scene/Scene.h"
 
 void PCameraSubsystem::OnAttach()
 {
-    PCamera* Camera = GetScene()->ActiveCamera;
+    PCamera* Camera = GetScene()->GetCamera();
     Camera->SetPerspectiveProjection(glm::radians(45.0f), GetWindow()->GetAspectRatio(), 0.1f, 1000.0f);
 
     Position = glm::vec3(-2.5f, 0.0f, 0.0f);
@@ -29,7 +29,7 @@ void PCameraSubsystem::OnUpdate(float DeltaTime)
         return;
     }
 
-    PCamera* Camera = GetScene()->ActiveCamera;
+    PCamera* Camera = GetScene()->GetCamera();
 
     if (PInput::GetKeyPressed(RK_KEY_W))
     {

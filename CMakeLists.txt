@@ -44,6 +44,8 @@ target_include_directories(Game PRIVATE
     ${ROCKET}/Vendor/glm
     ${ROCKET}/Vendor/spdlog/include
     ${ROCKET}/Vendor/entt/src
+    ${ROCKET}/Vendor/imgui
+    ${ROCKET}/Vendor/imgui/backends
 )
 
 target_link_libraries(Game PRIVATE
